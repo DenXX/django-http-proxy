@@ -5,8 +5,8 @@ from urlparse import urlparse
 from django.http import HttpResponse
 from django.views.generic import View
 
+from httpproxy.decorators import rewrite_response
 from httpproxy.recorder import ProxyRecorder
-
 
 logger = logging.getLogger(__name__)
 
