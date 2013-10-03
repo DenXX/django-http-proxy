@@ -15,6 +15,7 @@ class HttpProxy(View):
     mode = None
     base_url = None
     msg = 'Response body: \n%s'
+    user_agent = ''
 
     def dispatch(self, request, url, *args, **kwargs):
         self.url = url
@@ -35,7 +36,7 @@ class HttpProxy(View):
         This way, any further processing of the proxy'd request can just ignore
         the url given to the proxy and use request.path safely instead.
         """
-        if not self.url.startswith('/'):
+        if not self.url.startswith('/') and self.base_url:
             self.url = '/' + self.url
         request.path = self.url
         request.path_info = self.url
@@ -56,12 +57,13 @@ class HttpProxy(View):
         self.get_recorder().record(self.request, response)
 
     def get_recorder(self):
-        url = urlparse(self.base_url)
+        url = urlparse(self.get_full_url(self.url))
         return ProxyRecorder(domain=url.hostname, port=(url.port or 80))
 
     def get(self, request, *args, **kwargs):
         request_url = self.get_full_url(self.url)
-        request = self.create_request(request_url)
+        request = self.create_request(request_url,
+            headers={'User-Agent': self.user_agent})
         response = urllib2.urlopen(request)
         try:
             response_body = response.read()
@@ -79,7 +81,7 @@ class HttpProxy(View):
         Constructs the full URL to be requested
         """
         param_str = self.request.GET.urlencode()
-        request_url = u'%s%s' % (self.base_url, url)
+        request_url = u'%s%s' % (self.base_url if self.base_url else '', url)
         request_url += '?%s' % param_str if param_str else ''
         return request_url
 
