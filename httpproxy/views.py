@@ -16,6 +16,8 @@ class HttpProxy(View):
     base_url = None
     msg = 'Response body: \n%s'
     user_agent = ''
+    do_rewrite_response = False
+    view_name = 'http_proxy'
 
     def dispatch(self, request, url, *args, **kwargs):
         self.url = url
@@ -23,7 +25,10 @@ class HttpProxy(View):
         if self.mode == 'play':
             return self.play(request)
 
-        response = super(HttpProxy, self).dispatch(request, *args, **kwargs)
+        dispatcher = super(HttpProxy, self).dispatch
+        if self.do_rewrite_response:
+            dispatcher = rewrite_response(dispatcher, self.url, self.view_name)
+        response = dispatcher(request, *args, **kwargs)
         if self.mode == 'record':
             self.record(response)
         return response
