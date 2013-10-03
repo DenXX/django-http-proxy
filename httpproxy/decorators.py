@@ -30,7 +30,7 @@ def rewrite_response(fn, base_url, proxy_view_name):
             href = match.group(1)
             link_url = fix_relative_url(match.group(2))
             quotes = match.group(3)
-            return (href + proxy_root + link_url + quotes)
+            return (href + proxy_root + link_url + quotes) \
                 .encode(response._charset)
         response.content = REWRITE_HTML_REGEX.sub(replace_links, 
             response.content)
