@@ -8,7 +8,7 @@ import urllib
 REWRITE_HTML_REGEX = re.compile(r'((?:src|action|href)=["\'])(.*?)(["\'])', 
     re.IGNORECASE)
 # Replace links in the CSS files
-REWRITE_STYLES_REGEX = re.compile(r'((?:url)\(["\'])(.*?)(["\']\))',
+REWRITE_STYLES_REGEX = re.compile(r'((?:url)\(["\']*)(.*?)(["\']*\))',
     re.IGNORECASE)
 
 
