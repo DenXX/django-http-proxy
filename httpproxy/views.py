@@ -7,6 +7,7 @@ from django.views.generic import View
 
 from httpproxy.decorators import rewrite_response
 from httpproxy.recorder import ProxyRecorder
+from httpproxy import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,6 @@ class HttpProxy(View):
     base_url = None
     msg = 'Response body: \n%s'
     user_agent = ''
-    do_rewrite_response = False
     view_name = 'http_proxy'
 
     def dispatch(self, request, url, *args, **kwargs):
@@ -26,7 +26,7 @@ class HttpProxy(View):
             return self.play(request)
 
         dispatcher = super(HttpProxy, self).dispatch
-        if self.do_rewrite_response:
+        if settings.PROXY_REWRITE_RESPONSES:
             dispatcher = rewrite_response(dispatcher, self.url, self.view_name)
         response = dispatcher(request, *args, **kwargs)
         if self.mode == 'record':

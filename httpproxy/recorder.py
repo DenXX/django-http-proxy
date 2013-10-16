@@ -47,7 +47,8 @@ class ProxyRecorder(object):
 
         recorded_request, created = Request.objects.get_or_create(
                 method=request.method, domain=self.domain, port=self.port,
-                path=request.path, querykey=self._get_query_key(request))
+                path=request.path, querykey=self._get_query_key(request),
+		user=request.user)
 
         self.record_request_parameters(request, recorded_request)
 

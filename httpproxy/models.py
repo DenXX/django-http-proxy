@@ -1,5 +1,6 @@
 from urllib import urlencode
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import truncate_words
 from django.utils.translation import ugettext as _
@@ -12,6 +13,7 @@ class Request(models.Model):
     path = models.CharField(_('path'), max_length=250)
     date = models.DateTimeField(auto_now=True)
     querykey = models.CharField(_('query key'), max_length=255, editable=False)
+    user = models.ForeignKey(User)
 
     @property
     def querystring(self):
