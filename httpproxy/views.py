@@ -27,7 +27,6 @@ class HttpProxy(View):
         elif self.mode == 'playrecord':
             response = self.play(request, True)
             if response != None:
-                print ">>>>>>>>>>>>>>>>>>>>>>>>PLAYBACK"
                 return response
 
         dispatcher = super(HttpProxy, self).dispatch
