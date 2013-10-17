@@ -4,6 +4,8 @@ from django.core.urlresolvers import reverse
 from urlparse import urljoin
 import urllib
 
+from httpproxy import settings
+
 # Replace links in the HTML code
 REWRITE_HTML_REGEX = re.compile(r'((?:src|action|href)=["\'])(.*?)(["\'])', 
     re.IGNORECASE)
@@ -24,9 +26,8 @@ def rewrite_response(fn, base_url, proxy_view_name):
     """
     def decorate(request, *args, **kwargs):
         response = fn(request, *args, **kwargs)
-        proxy_root = reverse(proxy_view_name,
-            kwargs={'url': ''}
-        )
+        kwargs['url'] = ''
+        proxy_root = reverse(proxy_view_name, kwargs=kwargs)
         def replace_links(match):
             href = match.group(1)
             link_url = fix_relative_url(proxy_root, match.group(2))
@@ -36,6 +37,9 @@ def rewrite_response(fn, base_url, proxy_view_name):
             response.content)
         response.content = REWRITE_STYLES_REGEX.sub(replace_links,
             response.content)
+        # Iterating over user defined replacement rules
+        for regex, func in settings.EXTRA_RESPONSE_REWRITE_RULES.iteritems():
+            response.content = re.sub(regex, func, response.content)
         return response
 
     return decorate
