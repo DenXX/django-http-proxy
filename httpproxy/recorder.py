@@ -47,8 +47,7 @@ class ProxyRecorder(object):
 
         recorded_request, created = Request.objects.get_or_create(
                 method=request.method, domain=self.domain, port=self.port,
-                path=request.path, querykey=self._get_query_key(request),
-		user=request.user)
+                path=request.path, querykey=self._get_query_key(request))
 
         self.record_request_parameters(request, recorded_request)
 
@@ -96,6 +95,14 @@ class ProxyRecorder(object):
         Response.objects.create(request=recorded_request,
                 status=response.status_code, content_type=content_type,
                 content=response.content.decode(encoding))
+
+
+    def try_playback(self, request):
+        try:
+            return self.playback(request)
+        except RequestNotRecorded:
+            return None
+
 
     def playback(self, request):
         """

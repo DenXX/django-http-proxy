@@ -13,7 +13,6 @@ class Request(models.Model):
     path = models.CharField(_('path'), max_length=250)
     date = models.DateTimeField(auto_now=True)
     querykey = models.CharField(_('query key'), max_length=255, editable=False)
-    user = models.ForeignKey(User)
 
     @property
     def querystring(self):

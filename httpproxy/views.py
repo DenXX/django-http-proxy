@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class HttpProxy(View):
 
-    mode = None
+    mode = None  # Available modes are play, record, playrecord
     base_url = None
     msg = 'Response body: \n%s'
     user_agent = ''
@@ -24,12 +24,17 @@ class HttpProxy(View):
         request = self.normalize_request(request)
         if self.mode == 'play':
             return self.play(request)
+        elif self.mode == 'playrecord':
+            response = self.play(request, True)
+            if response != None:
+                print ">>>>>>>>>>>>>>>>>>>>>>>>PLAYBACK"
+                return response
 
         dispatcher = super(HttpProxy, self).dispatch
         if settings.PROXY_REWRITE_RESPONSES:
             dispatcher = rewrite_response(dispatcher, self.url, self.view_name)
         response = dispatcher(request, *args, **kwargs)
-        if self.mode == 'record':
+        if self.mode == 'record' or self.mode == 'playrecord':
             self.record(response)
         return response
 
@@ -48,12 +53,13 @@ class HttpProxy(View):
         request.META['PATH_INFO'] = self.url
         return request
 
-    def play(self, request):
+    def play(self, request, safe=False):
         """
         Plays back the response to a request, based on a previously recorded
         request/response
         """
-        return self.get_recorder().playback(request)
+        return self.get_recorder().playback(request) if not safe else \
+            self.get_recorder().try_playback(request)
 
     def record(self, response):
         """
