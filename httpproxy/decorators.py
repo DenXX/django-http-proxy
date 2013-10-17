@@ -38,8 +38,10 @@ def rewrite_response(fn, base_url, proxy_view_name):
         response.content = REWRITE_STYLES_REGEX.sub(replace_links,
             response.content)
         # Iterating over user defined replacement rules
-        for regex, func in settings.EXTRA_RESPONSE_REWRITE_RULES.iteritems():
-            response.content = re.sub(regex, func, response.content)
+        for regex, replacement in settings.EXTRA_RESPONSE_REWRITE_RULES.iteritems():
+            if isinstance(replacement, str):
+                replacement = replacement % kwargs
+            response.content = re.sub(regex, replacement, response.content)
         return response
 
     return decorate

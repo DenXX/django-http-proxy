@@ -17,6 +17,6 @@ PROXY_IGNORE_UNSUPPORTED = getattr(settings, 'PROXY_IGNORE_UNSUPPORTED', True)
 
 PROXY_REWRITE_RESPONSES = getattr(settings, 'PROXY_REWRITE_RESPONSES', False)
 
-# A dictionary of replacement rules in the form regexp:function
+# A dictionary of replacement rules in the form regexp:replacement
 EXTRA_RESPONSE_REWRITE_RULES = getattr(settings, 'EXTRA_RESPONSE_REWRITE_RULES', {})
 
