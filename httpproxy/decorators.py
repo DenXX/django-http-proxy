@@ -39,8 +39,10 @@ def rewrite_response(fn, base_url, proxy_view_name):
             response.content)
         # Iterating over user defined replacement rules
         for regex, replacement in settings.EXTRA_RESPONSE_REWRITE_RULES.iteritems():
+            # We also want to replace all keyword parameters if any from
+            # replacement text.
             if isinstance(replacement, str):
-                replacement = replacement % kwargs
+                replacement = replacement.format(**kwargs)
             response.content = re.sub(regex, replacement, response.content)
         return response
 
