@@ -10,9 +10,9 @@ class Request(models.Model):
     method = models.CharField(_('method'), max_length=20)
     domain = models.CharField(_('domain'), max_length=100)
     port = models.PositiveSmallIntegerField(default=80)
-    path = models.CharField(_('path'), max_length=250)
+    path = models.CharField(_('path'), max_length=2048)
     date = models.DateTimeField(auto_now=True)
-    querykey = models.CharField(_('query key'), max_length=255, editable=False)
+    querykey = models.CharField(_('query key'), max_length=1024, editable=False)
 
     @property
     def querystring(self):

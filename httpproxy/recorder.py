@@ -94,7 +94,7 @@ class ProxyRecorder(object):
         # Record the new response
         Response.objects.create(request=recorded_request,
                 status=response.status_code, content_type=content_type,
-                content=response.content.decode(encoding))
+                content=response.content.decode(encoding, 'replace'))
 
 
     def try_playback(self, request):
@@ -121,7 +121,7 @@ class ProxyRecorder(object):
         response = matching_request.response # TODO handle "no response" situation
         encoding = self._get_encoding(response.content_type)
 
-        return HttpResponse(response.content.encode(encoding),
+        return HttpResponse(response.content.encode(encoding, 'replace'),
                 status=response.status, mimetype=response.content_type)
 
     def response_supported(self, response):
