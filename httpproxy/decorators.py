@@ -17,8 +17,7 @@ REWRITE_STYLES_REGEX = re.compile(r'((?:url)\(["\']*)(.*?)(["\']*\))',
 def rewrite_response(fn, base_url, proxy_view_name):
     def fix_relative_url(proxy_url, url):
         if not url.startswith('javascript:') and not url.startswith('#'):
-            return proxy_url + urllib.quote(urljoin(base_url, url),
-                safe=':=&;/')
+            return proxy_url + urllib.quote(urljoin(base_url, url).replace('/','\\'), safe='')
         return url
     """
     Rewrites the response to fix references to resources loaded from HTML
