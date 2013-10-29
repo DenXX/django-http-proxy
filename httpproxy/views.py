@@ -22,6 +22,14 @@ class HttpProxy(View):
 
     def dispatch(self, request, url, *args, **kwargs):
         self.url = url
+        # Apache replaces http:// with http:/, and just trying to replace 
+        # :/ with :// causes some other problems, so we remove :// completely
+        # when passing url to proxy and now we are trying to restore it.
+        prefixes = ['http', 'https', 'ftp']
+        for prefix in prefixes:
+            if self.url.startswith(prefix + '/'):
+                self.url = prefix + '://' + self.url[len(prefix) + 1:]
+
         request = self.normalize_request(request)
         if self.mode == 'play':
             return self.play(request)
