@@ -21,7 +21,7 @@ class HttpProxy(View):
     view_name = 'http_proxy'
 
     def dispatch(self, request, url, *args, **kwargs):
-        self.url = urllib.unquote(url).replace('\\', '/')
+        self.url = url
         request = self.normalize_request(request)
         if self.mode == 'play':
             return self.play(request)
