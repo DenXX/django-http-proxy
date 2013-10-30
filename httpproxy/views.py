@@ -21,7 +21,7 @@ class HttpProxy(View):
     view_name = 'http_proxy'
 
     def dispatch(self, request, url, *args, **kwargs):
-        self.url = url
+        self.url = urllib.quote(url.encode('utf-8'), safe=':=&;/%?')
         # Apache replaces http:// with http:/, and just trying to replace 
         # :/ with :// causes some other problems, so we remove :// completely
         # when passing url to proxy and now we are trying to restore it.
