@@ -18,9 +18,7 @@ def rewrite_response(fn, base_url, proxy_view_name):
     def fix_relative_url(proxy_url, url):
         if not url.startswith('javascript:') and not url.startswith('#') and \
             not url.startswith('data:'):
-            print url
             url = urllib.quote(urljoin(base_url, url), safe=':=&;/%?')
-            print url
             return proxy_url + url.replace('://', '/')
         return url
     """
